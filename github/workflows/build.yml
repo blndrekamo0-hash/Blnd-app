@@ -1,0 +1,29 @@
+name: Build IPA via GitHub
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Build and Package
+        run: |
+          mkdir -p Payload
+          cp "index 2.html" Payload/index.html 2>/dev/null || cp *.html Payload/index.html 2>/dev/null || true
+          zip -r app.ipa Payload
+          
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-app-ipa
+          path: app.ipa
